@@ -1,0 +1,28 @@
+# /etc/filebeat/filebeat.yml
+filebeat.modules:
+  - module: system
+    syslog:
+      enabled: true
+      var.paths: ["/var/log/syslog","/var/log/messages"]
+    auth:
+      enabled: true
+      var.paths: ["/var/log/auth.log","/var/log/secure"]
+
+filebeat.inputs:
+  - type: log
+    id: cron
+    enabled: true
+    paths: ["/var/log/cron","/var/log/cron.log"]
+    fields: { log_source: "cron" }
+    fields_under_root: true
+
+  - type: log
+    id: dpkg
+    enabled: true
+    paths: ["/var/log/dpkg.log"]
+    fields: { log_source: "dpkg" }
+    fields_under_root: true
+
+# 중앙 Logstash로 전송
+output.logstash:
+  hosts: ["중앙 서버 ip:5044"]
